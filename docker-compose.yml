@@ -1,0 +1,7 @@
+version: "3.10"
+
+services:
+  obsidian-bot:
+    image: obsidian-bot
+    container_name: obsidian-bot
+    restart: always 
