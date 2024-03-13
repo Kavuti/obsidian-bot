@@ -1,3 +1,4 @@
 pyrogram==2.0.104
 tgcrypto==1.2.5
 pydrive2==1.15.3
+python-dotenv==1.0.1
