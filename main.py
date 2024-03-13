@@ -2,7 +2,8 @@ from pyrogram import Client, filters
 from gdrive import create_note
 import logging
 import json
-from pprint import pprint
+from dotenv import load_dotenv
+import os
 
 logging.basicConfig(format="%(asctime)s %(levelname)s:%(name)s - %(message)s")
 logger = logging.getLogger("obsidian-bot")
@@ -10,18 +11,14 @@ logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 handler.setLevel(logging.INFO)
 
-with open("bot-secret.json") as bot_secret_file:
-    bot_secret = json.loads(bot_secret_file.read())
-    logger.info("Secrets read from file")
-
 app = Client(
     "obsidian-bot",
-    api_id=bot_secret["api_id"],
-    api_hash=bot_secret["api_hash"],
-    bot_token=bot_secret["bot_token"],
+    api_id=os.getenv("TG_API_ID"),
+    api_hash=bot_secret["TG_API_HASH"],
+    bot_token=bot_secret["TG_BOT_TOKEN"],
 )
 
-@app.on_message(filters.user(bot_secret["my_id"]) & filters.text)
+@app.on_message(filters.user(bot_secret["TG_MY_ID"]) & filters.text)
 async def handle_message(client, message):
     logger.info(f"Saving new note")
     note = create_note(message.text)

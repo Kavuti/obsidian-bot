@@ -1,0 +1,31 @@
+name: Build and push
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build and push
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          WATCHTOWER_TOKEN: ${{ secrets.WATCHTOWER_TOKEN }}
+          WATCHTOWER_URL: ${{ secrets.WATCHTOWER_URL }}
+          GOOGLE_SERVICE_SECRETS: ${{ secrets.GOOGLE_SERVICE_SECRETS }}
+        run: |
+          echo "$GOOGLE_SERVICE_SECRETS" | base64 -d  > service-secrets.json
+          docker login --username "$DOCKERHUB_USERNAME" --password "$DOCKERHUB_TOKEN"
+          docker build -t "$DOCKERHUB_USERNAME/obsidian-bot" .
+          docker tag "$DOCKERHUB_USERNAME/obsidian-bot" "$DOCKERHUB_USERNAME/obsidian-bot:latest"
+          docker push "$DOCKERHUB_USERNAME/obsidian-bot"
+          docker push "$DOCKERHUB_USERNAME/obsidian-bot:latest"
+          curl -H "Authorization: Bearer $WATCHTOWER_TOKEN" "$WATCHTOWER_URL/v1/update"
