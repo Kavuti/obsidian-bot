@@ -5,6 +5,8 @@ import json
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
+
 logging.basicConfig(format="%(asctime)s %(levelname)s:%(name)s - %(message)s")
 logger = logging.getLogger("obsidian-bot")
 logger.setLevel(logging.INFO)
@@ -14,11 +16,11 @@ handler.setLevel(logging.INFO)
 app = Client(
     "obsidian-bot",
     api_id=os.getenv("TG_API_ID"),
-    api_hash=bot_secret["TG_API_HASH"],
-    bot_token=bot_secret["TG_BOT_TOKEN"],
+    api_hash=os.getenv("TG_API_HASH"),
+    bot_token=os.getenv("TG_BOT_TOKEN"),
 )
 
-@app.on_message(filters.user(bot_secret["TG_MY_ID"]) & filters.text)
+@app.on_message(filters.user(os.getenv("TG_MY_ID")) & filters.text)
 async def handle_message(client, message):
     logger.info(f"Saving new note")
     note = create_note(message.text)
